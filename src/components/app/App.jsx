@@ -1,49 +1,63 @@
-import React, { useState } from 'react';
+import React, { useReducer } from 'react';
 
-const useRecord = (init) => {
-  const [before, setBefore] = useState([]);
-  const [current, setCurrent] = useState(init);
-  const [after, setAfter] = useState([]);
-
-  const undo = () => {
-    setAfter(after => [current, ...after]);
-    setCurrent(before[before.length - 1]);
-    setBefore(before => before.slice(0, -1));
-  };
-
-  const redo = () => {
-    setBefore(before => [...before, current]);
-    setCurrent(after[0]);
-    setAfter(after => after.slice(1));
-  };
-
-  const record = val => {
-    setBefore(before => [...before, current]);
-    setCurrent(val);
-  };
-
-  return {
-    undo,
-    record,
-    redo,
-    current,
-  };
+const initialState = {
+  index: 0,
+  history: ['#0000FF']
 };
 
+function reducer(state, action) {
+  switch(action.type) {
+    case 'undo':
+      return { 
+        ...state,
+        index: state.index - 1
+      };
+    case 'redo':
+      return { 
+        ...state,
+        index: state.index + 1
+      };
+    case 'input': {
+      const oldArray = [...state.history];
+      const newArray = oldArray.filter((value, index) => index <= state.index);
+
+      return { 
+        ...state,
+        index: state.index + 1,
+        history: [...newArray, action.payload]
+      };
+    }
+    default:
+      state;
+  }
+}
+
 function App() {
-  const { current, undo, redo, record } = useRecord('#FF0000');
+
+  const [state, dispatch] = useReducer(reducer, initialState);
 
   return (
     <>
       <div>Color Changer</div>
-      <button onClick={undo}>undo</button>
-      <button onClick={redo}>redo</button>
+      <button onClick={() => dispatch({ type: 'undo' })}>undo</button>
+      <button onClick={() => dispatch({ type: 'redo' })}>redo</button>
       <input 
+        data-testid="selector"
+        name="selector"
         type="color" 
-        value={current} 
-        onChange={({ target }) => record(target.value)} />
-      <div style={{ backgroundColor: current, width: '10rem', height: '10rem' }}></div>
-    
+        value={state.history[state.index]} 
+        onChange={({ target }) => dispatch({ 
+          type: 'input', 
+          payload: target.value
+        })}
+      />
+      <div 
+        data-testid="output" 
+        style={{ 
+          backgroundColor: state.history[state.index], 
+          width: '10rem', 
+          height: '10rem' 
+        }}></div>
     </>
   );
 }

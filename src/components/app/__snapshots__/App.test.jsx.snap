@@ -12,11 +12,14 @@ exports[`App component renders App 1`] = `
     redo
   </button>
   <input
+    data-testid="selector"
+    name="selector"
     type="color"
-    value="#FF0000"
+    value="#0000FF"
   />
   <div
-    style="background-color: rgb(255, 0, 0); width: 10rem; height: 10rem;"
+    data-testid="output"
+    style="background-color: rgb(0, 0, 255); width: 10rem; height: 10rem;"
   />
 </DocumentFragment>
 `;
