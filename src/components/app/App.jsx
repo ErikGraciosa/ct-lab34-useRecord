@@ -35,6 +35,7 @@ function App() {
 
   return (
     <>
+      <div>Color Changer</div>
       <button onClick={undo}>undo</button>
       <button onClick={redo}>redo</button>
       <input 
