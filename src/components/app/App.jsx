@@ -15,8 +15,8 @@ function reducer(state, action) {
       console.log('redo click');
       return;
     case 'input':
-      console.log('input');
-      return;
+      console.log('input' + action.payload);
+      return { currentColor: action.payload };
     default:
       throw new Error();
   }
@@ -59,8 +59,7 @@ function App() {
   // const { current, undo, redo, record } = useRecord('#FF0000');
 
   const [state, dispatch] = useReducer(reducer, initialState);
-
-  const current = '#0000FF';
+  console.log(state);
 
   return (
     <>
@@ -71,14 +70,17 @@ function App() {
         data-testid="selector"
         name="selector"
         type="color" 
-        value={current} 
-        onChange={() => dispatch({ type: 'input' })}
+        value={state.currentColor} 
+        onChange={({ target }) => dispatch({ 
+          type: 'input', 
+          payload: target.value
+        })}
         // onChange={({ target }) => record(target.value)} 
       />
       <div 
         data-testid="output" 
         style={{ 
-          backgroundColor: current, 
+          backgroundColor: state.currentColor, 
           width: '10rem', 
           height: '10rem' 
         }}></div>
